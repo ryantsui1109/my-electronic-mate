@@ -1,0 +1,40 @@
+{
+  "name": "my-electronic-mate",
+  "version": "0.0.1",
+  "description": "A desktop mate made with electron",
+  "homepage": "https://github.com/ryantsui1109/my-electronic-mate#readme",
+  "bugs": {
+    "url": "https://github.com/ryantsui1109/my-electronic-mate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryantsui1109/my-electronic-mate.git"
+  },
+  "license": "ISC",
+  "author": "ryantsui",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "webpack --mode=development&&electron ."
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "autoprefixer": "^10.5.4",
+    "babel-loader": "^10.1.1",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "classnames": "^2.5.1",
+    "css-loader": "^7.1.4",
+    "electron": "^44.0.0",
+    "electron-is-packaged": "^1.0.2",
+    "html-webpack-plugin": "^5.6.8",
+    "html-webpack-root-plugin": "^0.10.0",
+    "react": "^19.2.8",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.2.8",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.109.2",
+    "webpack-cli": "^7.2.2"
+  }
+}
