@@ -5,14 +5,19 @@ const HtmlWebpackRootPlugin = require("html-webpack-root-plugin");
 const { type } = require("os");
 
 module.exports = {
-  entry: "./src/index.jsx",
+  entry: { main: "./src/index.jsx", mate: "./src/mate.jsx" },
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js",
+    filename: "[name].bundle.js",
     library: "lib",
+    clean: true,
   },
   module: {
     rules: [
+      {
+        test: /\.(png|jpg|jpeg|gif)$/i,
+        type: "asset/resource", // 將圖片輸出為獨立檔案
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -82,6 +87,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: "My Electronic Mate",
-    }),
+      filename: "index.html",
+      chunks: ["main"],
+    }),new HtmlWebpackPlugin({title:"桌寵",filename:"mate.html",chunks:["mate"]})
   ],
 };
