@@ -12,6 +12,31 @@ if (isPackaged) {
   prefix = "../../../";
 }
 
+ipcMain.on("close-window", (e) => {
+  const webContent=e.sender;
+  const win=BrowserWindow.fromWebContents(webContent);
+  win.close();
+});
+ipcMain.on("maximize-window", (e) => {
+  const webContent = e.sender;
+  const win = BrowserWindow.fromWebContents(webContent);
+  if (win.isMaximized()) {
+    win.unmaximize();
+  } else {
+    win.maximize();
+  }
+});
+ipcMain.on("minimize-window", (e) => {
+  const webContent = e.sender;
+  const win = BrowserWindow.fromWebContents(webContent);
+  win.minimize();
+});
+ipcMain.on("resize", (e) => {
+  const webContent = e.sender;
+  const win = BrowserWindow.fromWebContents(webContent);
+  win.setSize(800, 600);
+});
+
 const startMate = ({ winMate }) => {
   winMate.loadFile(path.join(__dirname, prefix, "dist", "mate.html"));
   winMate.setAlwaysOnTop(true, "screen-saver");

@@ -21,22 +21,6 @@ function startConfiguration() {
     },
   });
   win.loadFile(path.join(__dirname, prefix, "dist", "index.html"));
-  ipcMain.on("close-window", () => {
-    win.close();
-  });
-  ipcMain.on("maximize-window", () => {
-    if (win.isMaximized()) {
-      win.unmaximize();
-    } else {
-      win.maximize();
-    }
-  });
-  ipcMain.on("minimize-window", () => {
-    win.minimize();
-  });
-  ipcMain.on("resize", () => {
-    win.setSize(800, 600);
-  });
 }
 
 export default startConfiguration;
