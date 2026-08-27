@@ -2,7 +2,10 @@ import { app, BrowserWindow, ipcMain, screen, Tray, Menu } from "electron";
 import * as path from "path";
 import { fileURLToPath } from "node:url";
 import { isPackaged } from "electron-is-packaged";
+import Store from "electron-store";
 import menu from "./menu.js";
+
+const store=new Store();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,8 +16,8 @@ if (isPackaged) {
 }
 
 ipcMain.on("close-window", (e) => {
-  const webContent=e.sender;
-  const win=BrowserWindow.fromWebContents(webContent);
+  const webContent = e.sender;
+  const win = BrowserWindow.fromWebContents(webContent);
   win.close();
 });
 ipcMain.on("maximize-window", (e) => {
@@ -35,6 +38,14 @@ ipcMain.on("resize", (e) => {
   const webContent = e.sender;
   const win = BrowserWindow.fromWebContents(webContent);
   win.setSize(800, 600);
+});
+
+ipcMain.handle("electron-store-get", async (event, key) => {
+  return store.get(key);
+});
+
+ipcMain.handle("electron-store-set", async (event, key, val) => {
+  store.set(key, val);
 });
 
 const startMate = ({ winMate }) => {

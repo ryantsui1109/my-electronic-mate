@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow } from "electron";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { isPackaged } from "electron-is-packaged";
