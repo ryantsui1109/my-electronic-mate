@@ -1,11 +1,22 @@
-import { app, BrowserWindow, ipcMain, screen, Tray, Menu } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  Tray,
+  Menu,
+  safeStorage,
+} from "electron";
 import * as path from "path";
 import { fileURLToPath } from "node:url";
 import { isPackaged } from "electron-is-packaged";
 import Store from "electron-store";
 import menu from "./menu.js";
+import OpenAI from "openai";
+import createPrompt from "./prompt.js";
 
-const store=new Store();
+const configStore = new Store();
+const historyStore = new Store({ name: "chatHistory" });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,11 +52,101 @@ ipcMain.on("resize", (e) => {
 });
 
 ipcMain.handle("electron-store-get", async (event, key) => {
-  return store.get(key);
+  return configStore.get(key);
 });
 
 ipcMain.handle("electron-store-set", async (event, key, val) => {
-  store.set(key, val);
+  configStore.set(key, val);
+});
+ipcMain.handle("app-config-get", async (event) => {
+  const appConfig = await readConfig();
+
+  return appConfig;
+});
+
+async function readConfig() {
+  const appConfig = configStore.get("appConfig");
+  const encryptedApiKey = appConfig.encryptedApiKey;
+  const decryptResult = await safeStorage.decryptStringAsync(
+    Buffer.from(encryptedApiKey.data),
+  );
+  appConfig["apiKey"] = decryptResult.result;
+  delete appConfig.encryptedApiKey;
+  if (decryptResult.shouldReEncrypt) {
+    writeConfig(appConfig);
+  }
+  return appConfig;
+}
+
+async function writeConfig(config) {
+  const encryptedApiKey = await safeStorage.encryptStringAsync(config.apiKey);
+  const appConfig = Object.assign({}, config);
+  delete appConfig.apiKey;
+  appConfig["encryptedApiKey"] = encryptedApiKey;
+  configStore.set("appConfig", appConfig);
+}
+
+ipcMain.handle("app-config-set", async (event, val) => {
+  writeConfig(val);
+});
+
+function estimateTokens(messages) {
+  let total = 0;
+  for (const msg of messages) {
+    total += (msg.content?.length || 0) + 4;
+  }
+  return total;
+}
+
+function trimHistory(history, maxToken) {
+  while (estimateTokens(history) > maxToken && history.length > 2) {
+    history.splice(0, 2);
+  }
+}
+
+ipcMain.handle("send-dialogue", async (e, prompt) => {
+  const appConfig = await readConfig();
+  const client = new OpenAI({
+    apiKey: appConfig.apiKey,
+    baseURL: appConfig.baseURL,
+  });
+  const systemPrompt = createPrompt(configStore.get("characterInfo"));
+
+  const conversationHistory = historyStore.get("chats", []);
+
+  const systemTokenCount = systemPrompt.length + 4;
+  trimHistory(conversationHistory, appConfig.maxToken - systemTokenCount);
+
+  const instantHistory = [
+    { role: "system", content: systemPrompt },
+    ...conversationHistory,
+  ];
+
+  instantHistory.push({ role: "user", content: prompt });
+  conversationHistory.push({ role: "user", content: prompt });
+
+  const stream = await client.chat.completions.create({
+    model: appConfig.model,
+    messages: instantHistory,
+    stream: true,
+    temperature: 0.8,
+    top_p: 0.9,
+  });
+
+  let instantReply = "";
+  const allWindows = BrowserWindow.getAllWindows();
+  const winMate = allWindows.find((win) => win.getTitle() === "desktop-mate");
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    instantReply += content;
+    winMate.webContents.send("dialogue-result", content);
+  }
+
+  conversationHistory.push({ role: "assistant", content: instantReply });
+  historyStore.set("chats", conversationHistory);
+
+  winMate.webContents.send("dialogue-end");
+  return 0;
 });
 
 const startMate = ({ winMate }) => {

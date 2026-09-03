@@ -5,6 +5,9 @@ const HtmlWebpackRootPlugin = require("html-webpack-root-plugin");
 const { type } = require("os");
 
 module.exports = {
+  resolve: {
+    extensions: [".js", ".jsx"],
+  },
   entry: { main: "./src/index.jsx", mate: "./src/mate.jsx" },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -89,6 +92,11 @@ module.exports = {
       title: "My Electronic Mate",
       filename: "index.html",
       chunks: ["main"],
-    }),new HtmlWebpackPlugin({title:"桌寵",filename:"mate.html",chunks:["mate"]})
+    }),
+    new HtmlWebpackPlugin({
+      title: "desktop-mate",
+      filename: "mate.html",
+      chunks: ["mate"],
+    }),
   ],
 };
