@@ -1,7 +1,7 @@
 import WinCtrlBar from "./ui/WinCtrlBar.jsx";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.min.css";
+import "bootstrap-icons/font/bootstrap-icons.min.css"; 
 import "./styles/index.css";
 import "overlayscrollbars/overlayscrollbars.css";
 import cn from "classnames";
