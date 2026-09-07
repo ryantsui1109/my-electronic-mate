@@ -60,11 +60,24 @@ function AppConfig() {
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicApiKey">
             <Form.Label>API key</Form.Label>
-            <Form.Control
-              placeholder="請填寫 API key"
-              type="password"
-              name="apiKey"
-            ></Form.Control>
+            <InputGroup>
+              <Form.Control
+                placeholder="請填寫 API key"
+                name="apiKey"
+                type={showPassword ? "text" : "password"}
+              ></Form.Control>
+              <Button
+                variant="secondary"
+                onClick={handleTogglePassword}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <i className="bi bi-eye-slash" />
+                ) : (
+                  <i className="bi bi-eye" />
+                )}
+              </Button>
+            </InputGroup>
             <Form.Text>透過 Electron SafeStorage 加密後儲存</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicModel">
