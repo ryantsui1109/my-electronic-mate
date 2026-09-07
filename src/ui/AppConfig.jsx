@@ -1,8 +1,19 @@
-import { useRef, useEffect } from "react";
-import { Button, Form } from "react-bootstrap";
+import { useRef, useEffect, useState } from "react";
+import {
+  Button,
+  Dropdown,
+  DropdownButton,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
+import cn from "classnames";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
+import "../styles/modelSelectorDropdown.css";
 
 function AppConfig() {
   const formRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [availableModels, setAvailableModels] = useState([]);
 
   useEffect(() => {
     async function getAppConfig(params) {
@@ -13,16 +24,31 @@ function AppConfig() {
       });
     }
 
+    getAvailableModels();
     getAppConfig();
   }, []);
+
+  async function getAvailableModels() {
+    const res = await window.api.invoke("get-available-models");
+    setAvailableModels(res);
+  }
+
+  function setSelected(key) {
+    formRef.current.elements["model"].value = key;
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
 
     const fdObject = Object.fromEntries(fd.entries());
-    console.log(fdObject);
+
     window.appConfig.set(fdObject);
+    getAvailableModels();
+  }
+
+  function handleTogglePassword() {
+    setShowPassword((prev) => !prev);
   }
   return (
     <>
@@ -43,7 +69,38 @@ function AppConfig() {
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicModel">
             <Form.Label>模型</Form.Label>
-            <Form.Control placeholder="請填寫模型名稱" name="model" />
+            <InputGroup>
+              <Form.Control placeholder="請填寫模型名稱" name="model" />
+              <DropdownButton
+                onSelect={(key) => setSelected(key)}
+                popperConfig={{
+                  modifiers: [
+                    {
+                      name: "computeStyles",
+                      enabled: false,
+                    },
+                  ],
+                }}
+              >
+                <OverlayScrollbarsComponent
+                  defer
+                  style={{ maxHeight: "180px" }}
+                  options={{
+                    scrollbars: {
+                      autoHide: "leave", // 滑鼠移開時自動隱藏滾動條
+                    },
+                  }}
+                >
+                  {availableModels.map((value) => {
+                    return (
+                      <Dropdown.Item key={value} eventKey={value}>
+                        {value}
+                      </Dropdown.Item>
+                    );
+                  })}
+                </OverlayScrollbarsComponent>
+              </DropdownButton>
+            </InputGroup>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicMaxToken">
             <Form.Label>最大 token 數量</Form.Label>
