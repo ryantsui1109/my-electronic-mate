@@ -6,11 +6,6 @@ import { isPackaged } from "electron-is-packaged";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let prefix = "../";
-if (isPackaged) {
-  prefix = "../../../";
-}
-
 function startConfiguration() {
   const win = new BrowserWindow({
     width: 800,
@@ -20,7 +15,7 @@ function startConfiguration() {
       preload: path.join(__dirname, "preload.cjs"),
     },
   });
-  win.loadFile(path.join(__dirname, prefix, "dist", "index.html"));
+  win.loadFile(path.join(__dirname, "..", "dist", "index.html"));
 }
 
 export default startConfiguration;

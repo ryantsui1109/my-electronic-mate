@@ -21,11 +21,6 @@ const historyStore = new Store({ name: "chatHistory" });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let prefix = "../";
-if (isPackaged) {
-  prefix = "../../../";
-}
-
 ipcMain.on("close-window", (e) => {
   const webContent = e.sender;
   const win = BrowserWindow.fromWebContents(webContent);
@@ -181,14 +176,16 @@ ipcMain.handle("send-dialogue", async (e, prompt) => {
 });
 
 const startMate = ({ winMate }) => {
-  winMate.loadFile(path.join(__dirname, prefix, "dist", "mate.html"));
+  winMate.loadFile(path.join(__dirname,"..", "dist", "mate.html"));
   winMate.setAlwaysOnTop(true, "screen-saver");
 };
 
 app.whenReady().then(() => {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
-  const tray = new Tray(path.resolve("assets/saijo_takato_head.png"));
+  const tray = new Tray(
+    path.join(__dirname, "../assets/saijo_takato_head.png"),
+  );
 
   const winMate = new BrowserWindow({
     width: 250,
