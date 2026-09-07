@@ -51,6 +51,14 @@ ipcMain.on("resize", (e) => {
   win.setSize(800, 600);
 });
 
+ipcMain.handle("history-store-get", async (event, key) => {
+  return historyStore.get(key);
+});
+
+ipcMain.handle("history-store-set", async (event, key, val) => {
+  historyStore.set(key, val);
+});
+
 ipcMain.handle("electron-store-get", async (event, key) => {
   return configStore.get(key);
 });
@@ -103,6 +111,29 @@ function trimHistory(history, maxToken) {
     history.splice(0, 2);
   }
 }
+
+ipcMain.on("delete-conversation", (e, index) => {
+  const conversationHistory = historyStore.get("chats");
+  conversationHistory.splice(index, 2);
+  historyStore.set("chats", conversationHistory);
+});
+
+ipcMain.handle("get-available-models", async () => {
+  const appConfig = await readConfig();
+  const client = new OpenAI({
+    apiKey: appConfig.apiKey,
+    baseURL: appConfig.baseURL,
+  });
+  let ret = [];
+  try {
+    const response = await client.models.list();
+
+    for (const model of response.data) {
+      ret.push(model.id);
+    }
+  } catch (e) {}
+  return ret;
+});
 
 ipcMain.handle("send-dialogue", async (e, prompt) => {
   const appConfig = await readConfig();
