@@ -1,0 +1,34 @@
+{
+  "appId": "io.github.ryantsui1109.mem",
+  "productName": "My Electronic Mate",
+  "files": [
+    "dist/**/*",
+    "package.json",
+    "assets/**/*",
+    {
+      "from": "src",
+      "to": "src",
+      "filter": ["*.js","*.cjs"]
+    }
+  ],
+  "directories":{
+    "output":"build"
+  },
+  "win": {
+    "icon": "assets/saijo_takato_head.png",
+    "target": [
+      {
+        "target": "zip",
+        "arch": ["x64"]
+      },
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ]
+  },
+  "linux": {
+    "extraFiles": "platform-tools-linux",
+    "target": ["tar.xz"]
+  }
+}
