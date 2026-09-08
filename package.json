@@ -16,7 +16,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack --mode=development && electron .",
-    "build": "cross-env NODE_ENV=production webpack --mode=production"
+    "build": "cross-env NODE_ENV=production webpack --mode=production && electron-builder"
   },
   "devDependencies": {
     "@babel/preset-env": "^8.0.2",
