@@ -115,12 +115,13 @@ ipcMain.on("delete-conversation", (e, index) => {
 
 ipcMain.handle("get-available-models", async () => {
   const appConfig = await readConfig();
-  const client = new OpenAI({
-    apiKey: appConfig.apiKey,
-    baseURL: appConfig.baseURL,
-  });
+  
   let ret = [];
   try {
+    const client = new OpenAI({
+      apiKey: appConfig.apiKey,
+      baseURL: appConfig.baseURL,
+    });
     const response = await client.models.list();
 
     for (const model of response.data) {
