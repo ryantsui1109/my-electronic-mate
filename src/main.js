@@ -15,8 +15,23 @@ import menu from "./menu.js";
 import OpenAI from "openai";
 import createPrompt from "./prompt.js";
 
-const configStore = new Store();
-const historyStore = new Store({ name: "chatHistory" });
+const configStore = new Store({
+  defaults: {
+    charaecterInfo: {
+      name: "",
+      species: "",
+      gender: "",
+      selfSetup: "",
+      calling: "",
+      characterTags: [],
+      mouthAddictions: [],
+    },
+  },
+});
+const historyStore = new Store({
+  name: "chatHistory",
+  defaults: { chats: [] },
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,7 +83,7 @@ ipcMain.handle("app-config-get", async (event) => {
 });
 
 async function readConfig() {
-  const appConfig = configStore.get("appConfig",{});
+  const appConfig = configStore.get("appConfig", {});
   const encryptedApiKey = appConfig.encryptedApiKey || null;
   const decryptResult = encryptedApiKey
     ? await safeStorage.decryptStringAsync(Buffer.from(encryptedApiKey.data))
@@ -115,7 +130,7 @@ ipcMain.on("delete-conversation", (e, index) => {
 
 ipcMain.handle("get-available-models", async () => {
   const appConfig = await readConfig();
-  
+
   let ret = [];
   try {
     const client = new OpenAI({
@@ -137,15 +152,7 @@ ipcMain.handle("send-dialogue", async (e, prompt) => {
     apiKey: appConfig.apiKey,
     baseURL: appConfig.baseURL,
   });
-  const systemPrompt = createPrompt(configStore.get("characterInfo"), {
-    name: "",
-    species: "",
-    gender: "",
-    selfSetup: "",
-    calling: "",
-    characterTags: [],
-    mouthAddictions: [],
-  });
+  const systemPrompt = createPrompt(configStore.get("characterInfo"));
 
   const conversationHistory = historyStore.get("chats", []);
 
