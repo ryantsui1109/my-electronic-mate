@@ -136,7 +136,15 @@ ipcMain.handle("send-dialogue", async (e, prompt) => {
     apiKey: appConfig.apiKey,
     baseURL: appConfig.baseURL,
   });
-  const systemPrompt = createPrompt(configStore.get("characterInfo"));
+  const systemPrompt = createPrompt(configStore.get("characterInfo"), {
+    name: "",
+    species: "",
+    gender: "",
+    selfSetup: "",
+    calling: "",
+    characterTags: [],
+    mouthAddictions: [],
+  });
 
   const conversationHistory = historyStore.get("chats", []);
 
@@ -176,7 +184,7 @@ ipcMain.handle("send-dialogue", async (e, prompt) => {
 });
 
 const startMate = ({ winMate }) => {
-  winMate.loadFile(path.join(__dirname,"..", "dist", "mate.html"));
+  winMate.loadFile(path.join(__dirname, "..", "dist", "mate.html"));
   winMate.setAlwaysOnTop(true, "screen-saver");
 };
 

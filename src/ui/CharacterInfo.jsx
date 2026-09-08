@@ -14,12 +14,12 @@ function CharacterInfo() {
   useEffect(() => {
     async function getCharacterInfo(params) {
       const ci = await window.electronStore.get("characterInfo");
-      setCharacterTags(ci.characterTags);
-      setMouthAddictions(ci.mouthAddictions);
+      setCharacterTags(ci.characterTags || []);
+      setMouthAddictions(ci.mouthAddictions || []);
       delete ci.characterTags;
       delete ci.mouthAddictions;
-      Object.entries(ci).forEach(([key,value]) => {
-        formRef.current.elements[key].value = value;
+      Object.entries(ci).forEach(([key, value]) => {
+        formRef.current.elements[key].value = value || "";
       });
     }
 

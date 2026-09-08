@@ -20,7 +20,7 @@ function AppConfig() {
       const appConfig = await window.appConfig.get();
 
       Object.entries(appConfig).forEach(([key, value]) => {
-        formRef.current.elements[key].value = value;
+        formRef.current.elements[key].value = value || "";
       });
     }
 
