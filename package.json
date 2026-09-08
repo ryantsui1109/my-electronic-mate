@@ -15,7 +15,8 @@
   "type": "module",
   "main": "src/main.js",
   "scripts": {
-    "start": "webpack --mode=development&&electron ."
+    "start": "cross-env NODE_ENV=development webpack --mode=development && electron .",
+    "build": "cross-env NODE_ENV=production webpack --mode=production"
   },
   "devDependencies": {
     "@babel/preset-env": "^8.0.2",
@@ -25,6 +26,7 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "classnames": "^2.5.1",
+    "cross-env": "^10.1.0",
     "css-loader": "^7.1.4",
     "electron": "^44.0.0",
     "electron-builder": "^26.15.3",
