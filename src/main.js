@@ -69,10 +69,10 @@ ipcMain.handle("app-config-get", async (event) => {
 
 async function readConfig() {
   const appConfig = configStore.get("appConfig");
-  const encryptedApiKey = appConfig.encryptedApiKey;
-  const decryptResult = await safeStorage.decryptStringAsync(
-    Buffer.from(encryptedApiKey.data),
-  );
+  const encryptedApiKey = appConfig.encryptedApiKey || null;
+  const decryptResult = encryptedApiKey
+    ? await safeStorage.decryptStringAsync(Buffer.from(encryptedApiKey.data))
+    : "";
   appConfig["apiKey"] = decryptResult.result;
   delete appConfig.encryptedApiKey;
   if (decryptResult.shouldReEncrypt) {
