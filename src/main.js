@@ -204,11 +204,11 @@ app.whenReady().then(() => {
   );
 
   const winMate = new BrowserWindow({
-    width: 250,
-    height: 450,
+    width: 200,
+    height: 300,
     frame: false,
     x: width - 300,
-    y: height - 450,
+    y: height - 350,
     transparent: true,
     type: "toolbar",
     alwaysOnTop: true,
