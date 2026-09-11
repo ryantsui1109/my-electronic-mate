@@ -5,6 +5,7 @@ import {
   screen,
   Tray,
   Menu,
+  nativeImage,
   safeStorage,
 } from "electron";
 import * as path from "path";
@@ -199,9 +200,10 @@ const startMate = ({ winMate }) => {
 app.whenReady().then(() => {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
-  const tray = new Tray(
-    path.join(__dirname, "../assets/saijo_takato_head.png"),
-  );
+  const trayIcon = nativeImage
+    .createFromPath(path.join(__dirname, "../assets/saijo_takato_head.png"))
+    .resize({ width: 22, height: 22 });
+  const tray = new Tray(trayIcon);
 
   const winMate = new BrowserWindow({
     width: 200,
@@ -219,9 +221,17 @@ app.whenReady().then(() => {
   const contextMenu = Menu.buildFromTemplate(menu);
   tray.setToolTip("MEM by ryantsui");
   tray.setContextMenu(contextMenu);
+
+  if (process.platform === "darwin") {
+    const appMenu = Menu.buildFromTemplate([
+      { label: app.name, submenu: menu },
+    ]);
+    Menu.setApplicationMenu(appMenu);
+  }
+
   startMate({ winMate });
   app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) startMate({ win, winMate });
+    if (BrowserWindow.getAllWindows().length === 0) startMate({ winMate });
   });
 });
 
