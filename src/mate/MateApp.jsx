@@ -13,8 +13,10 @@ function MateApp() {
   const [isFocused, setIsFocused] = useState(false);
   const [showThinking, setShowThinking] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
+  const [showDragHandle, setShowDragHandle] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
   const inputRef = useRef(null);
+  const timerRef = useRef(null);
 
   const showDialog = isHovered || isFocused;
 
@@ -41,6 +43,14 @@ function MateApp() {
     };
   }, []);
 
+  function showHandle() {
+    setShowDragHandle(true);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setShowDragHandle(false);
+    }, 3000);
+  }
+
   function handleSubmit(e) {
     setShowResponse(true);
     setShowThinking(true);
@@ -55,12 +65,15 @@ function MateApp() {
   return (
     <>
       <div
-        className="position-relative d-inline-block w-100"
-        onMouseEnter={() => setIsHovered(true)}
+        className={cn("position-relative", "d-inline-block", "w-100")}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          showHandle();
+        }}
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="w-100">
-          <img src={st} className="w-100" alt="mate" />
+          <img src={st} draggable="false" className="w-100" alt="mate" />
         </div>
 
         {showResponse && (
@@ -88,9 +101,28 @@ function MateApp() {
             {aiResponse}
           </div>
         )}
+        <div
+          className={cn(
+            "position-absolute",
+            "top-0",
+            "start-50",
+            "translate-middle-x",
+          )}
+          style={{
+            WebkitAppRegion: "drag",
+            display: showDragHandle ? "block" : "none",
+          }}
+        >
+          <i
+            className={cn("bi", "bi-grip-horizontal", "text-white")}
+            style={{ fontSize: "1.5rem" }}
+          ></i>
+        </div>
 
         <div
-          style={{ display: showDialog ? "block" : "none" }}
+          style={{
+            display: showDialog ? "block" : "none",
+          }}
           className={cn(
             "position-absolute",
             "bottom-0",
@@ -111,7 +143,10 @@ function MateApp() {
               name="prompt"
               placeholder="與桌寵對話"
               autoComplete="off"
-              onFocus={() => setIsFocused(true)}
+              onFocus={() => {
+                setIsFocused(true);
+                showHandle();
+              }}
               onBlur={() => setIsFocused(false)}
             />
           </Form>
