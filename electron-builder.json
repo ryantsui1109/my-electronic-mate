@@ -15,6 +15,7 @@
     "output": "build"
   },
   "mac": {
+    "icon": "assets/saijo_takato_head.png",
     "target": [
       {
         "target": "dmg",
@@ -36,7 +37,7 @@
     ]
   },
   "linux": {
-    "extraFiles": "platform-tools-linux",
+    "icon": "assets/saijo_takato_head.png",
     "target": ["tar.xz"]
   },
   "nsis": {
