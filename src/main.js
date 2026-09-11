@@ -13,7 +13,6 @@ import { fileURLToPath } from "node:url";
 import { isPackaged } from "electron-is-packaged";
 import Store from "electron-store";
 import menu from "./menu.js";
-import startConfiguration from "./startConfiguration.js";
 import OpenAI from "openai";
 import createPrompt from "./prompt.js";
 
@@ -225,20 +224,7 @@ app.whenReady().then(() => {
 
   if (process.platform === "darwin") {
     const appMenu = Menu.buildFromTemplate([
-      {
-        label: app.name,
-        submenu: [
-          { role: "about" },
-          { type: "separator" },
-          {
-            label: "Settings",
-            accelerator: "CommandOrControl+,",
-            click: () => startConfiguration(),
-          },
-          { type: "separator" },
-          { role: "quit" },
-        ],
-      },
+      { label: app.name, submenu: menu },
     ]);
     Menu.setApplicationMenu(appMenu);
   }
