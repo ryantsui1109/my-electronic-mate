@@ -1,8 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
-import st from "../../assets/saijo_takato.png";
+import st from "../../assets/saijo_takato_cut.png";
 import "../styles/mate.css";
 import { Form } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 
 import cn from "classnames";
 import { useState, useRef, useEffect } from "react";
@@ -10,6 +11,8 @@ import { useState, useRef, useEffect } from "react";
 function MateApp() {
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [showThinking, setShowThinking] = useState(false);
+  const [showResponse, setShowResponse] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
   const inputRef = useRef(null);
 
@@ -17,12 +20,16 @@ function MateApp() {
 
   useEffect(() => {
     function handleResult(res) {
+      setShowThinking(true);
       setAiResponse((prev) => prev + res);
     }
 
     function handleDialogueEnd() {
+      setShowThinking(false);
+
       setTimeout(() => {
         setAiResponse("");
+        setShowResponse(false);
       }, 6000);
     }
 
@@ -35,6 +42,8 @@ function MateApp() {
   }, []);
 
   function handleSubmit(e) {
+    setShowResponse(true);
+    setShowThinking(true);
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     window.dialogue.send(fd.get("prompt"));
@@ -54,7 +63,7 @@ function MateApp() {
           <img src={st} className="w-100" alt="mate" />
         </div>
 
-        {aiResponse && (
+        {showResponse && (
           <div
             className={cn(
               "position-absolute",
@@ -68,6 +77,14 @@ function MateApp() {
               "z-3",
             )}
           >
+            {showThinking && (
+              <Spinner
+                style={{ height: "1rem", width: "1rem" }}
+                animation="grow"
+                variant="secondary"
+              />
+            )}
+
             {aiResponse}
           </div>
         )}
