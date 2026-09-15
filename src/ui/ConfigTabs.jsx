@@ -1,11 +1,13 @@
+import { useState } from "react";
 import { Nav, Tab } from "react-bootstrap";
 import CharacterInfo from "./CharacterInfo";
 import AppConfig from "./AppConfig";
 import ChatManagement from "./ChatManagement";
 function ConfigTabs() {
+  const [activeKey, setActiveKey] = useState("appConfig");
   return (
     <>
-      <Tab.Container defaultActiveKey="appConfig">
+      <Tab.Container activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
         <Nav variant="tabs" className="mb-3">
           <Nav.Item>
             <Nav.Link eventKey="appConfig">App設定</Nav.Link>
@@ -25,7 +27,7 @@ function ConfigTabs() {
             <CharacterInfo />
           </Tab.Pane>
           <Tab.Pane eventKey="chatManagement">
-            <ChatManagement />
+            <ChatManagement active={activeKey === "chatManagement"} />
           </Tab.Pane>
         </Tab.Content>
       </Tab.Container>

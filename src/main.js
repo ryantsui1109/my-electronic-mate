@@ -12,7 +12,7 @@ import * as path from "path";
 import { fileURLToPath } from "node:url";
 import { isPackaged } from "electron-is-packaged";
 import Store from "electron-store";
-import menu from "./menu.js";
+import { trayMenu, buildAppMenu } from "./menu.js";
 import OpenAI from "openai";
 import createPrompt from "./prompt.js";
 
@@ -218,16 +218,12 @@ app.whenReady().then(() => {
       preload: path.join(__dirname, "preload.cjs"),
     },
   });
-  const contextMenu = Menu.buildFromTemplate(menu);
+  const contextMenu = Menu.buildFromTemplate(trayMenu);
   tray.setToolTip("MEM by ryantsui");
   tray.setContextMenu(contextMenu);
 
-  if (process.platform === "darwin") {
-    const appMenu = Menu.buildFromTemplate([
-      { label: app.name, submenu: menu },
-    ]);
-    Menu.setApplicationMenu(appMenu);
-  }
+  const appMenu = Menu.buildFromTemplate(buildAppMenu(app.name));
+  Menu.setApplicationMenu(appMenu);
 
   startMate({ winMate });
   app.on("activate", () => {

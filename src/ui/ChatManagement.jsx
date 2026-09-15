@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import AssistantBox from "./AssistantBox";
 import UserBox from "./UserBox";
 
-function ChatManagement() {
+function ChatManagement({ active }) {
   const [chatHistory, setChatHistory] = useState([]);
   useEffect(() => {
+    if (!active) return;
     async function getChatHistory() {
       const chatHistory = await window.historyStore.get("chats");
       setChatHistory(chatHistory);
     }
 
     getChatHistory();
-  }, []);
+  }, [active]);
 
   return (
     <>
